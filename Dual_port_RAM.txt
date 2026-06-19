@@ -1,0 +1,39 @@
+`timescale 1ns/1ps
+
+module dual_ram
+#(
+    parameter RAM_WIDTH = 8,
+    parameter RAM_DEPTH = 256,
+    parameter ADDR_SIZE = 8
+)
+(
+    output reg [RAM_WIDTH-1:0] data_out,
+    input  [RAM_WIDTH-1:0] data_in,
+    input  [ADDR_SIZE-1:0] wr_addr,
+    input  [ADDR_SIZE-1:0] rd_addr,
+    input  wr_en,
+    input  rd_en,
+    input  clk,
+    input  rst
+);
+
+    reg [RAM_WIDTH-1:0] mem [RAM_DEPTH-1:0];
+    integer i;
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            for (i = 0; i < RAM_DEPTH; i = i + 1)
+                mem[i] <= 0;
+
+            data_out <= 0;
+        end
+        else begin
+            if (wr_en)
+                mem[wr_addr] <= data_in;
+
+            if (rd_en)
+                data_out <= mem[rd_addr];
+        end
+    end
+
+endmodule

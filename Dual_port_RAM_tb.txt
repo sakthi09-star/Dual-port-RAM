@@ -1,0 +1,51 @@
+// Code your testbench here
+// or browse Examples
+`timescale 1ns/1ps
+module dual_ram_tb();
+  reg [7:0] data_in;  
+  reg [7:0] wr_addr, rd_addr;
+  reg wr_en, rd_en;
+  reg clk, rst;
+  wire [7:0]data_out;
+  
+  dual_ram uut(.clk(clk), .rst(rst), .data_in(data_in), 
+               .wr_addr(wr_addr), .wr_en(wr_en),  .rd_addr(rd_addr), .rd_en(rd_en), .data_out(data_out));
+  
+  initial begin
+      $dumpfile("dump.vcd");
+      $dumpvars(0, dual_ram_tb);
+  end
+               
+ initial begin
+   clk=0;
+   forever #5 clk=~clk;
+ end
+               
+initial begin
+ 
+  $monitor("time=%0t, data_in=%0b, wr_en=%0b, wr_addr=%0b, rd_en=%0b, rd_addr=%0b, data_out=%0b", $time, 								data_in, wr_en, wr_addr, rd_en, rd_addr, data_out);					
+  
+  
+  	  rst = 1;
+      #10 rst = 0;
+
+      wr_en   = 1;
+      wr_addr = 8'h1A;
+      data_in = 8'hFF;
+
+      #10;
+      wr_addr = 8'h42;
+      data_in = 8'h0F;
+
+      #10;
+      wr_en = 0;
+
+      rd_en   = 1;
+      rd_addr = 8'h42;
+
+      #30;
+  	$finish;
+end
+endmodule
+               
+   
